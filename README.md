@@ -1,132 +1,113 @@
-# 🧠 Neural Swarm v2.0: The Autonomous YouTube Factory
+# 🧠 Neural Swarm v2.2: The Autonomous YouTube Factory (LangGraph Powered)
 
-> **Neural Swarm v2.0** is not just a script; it's a sovereign AI workforce. It orchestrates **15 specialized Gemini-powered agents** across a multi-stage intelligence pipeline to transform a single niche into a viral-ready YouTube production.
+> **Neural Swarm v2.2** is a sovereign AI workforce that orchestrates **15 specialized Gemini agents** using a high-performance **LangGraph** State Machine. It transforms raw niches into viral-ready YouTube productions using real-time competitive intelligence.
 
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue.svg?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Gemini 3.0](https://img.shields.io/badge/Gemini-3.0_Flash/Pro-purple.svg?style=for-the-badge&logo=google-gemini)](https://aistudio.google.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![LangGraph](https://img.shields.io/badge/Powered_by-LangGraph-orange.svg?style=for-the-badge)](https://langchain-ai.github.io/langgraph/)
 
 ---
 
-## 🏗️ System Architecture: The 4-Phase Intelligence Pipeline
+## 🏗️ v2.2 Architecture: The Neural Graph
 
-Neural Swarm utilizes a **Synchronous Multi-Agent Orchestration** model. Instead of a single LLM call, your content passes through four rigorous departments.
+Neural Swarm v2.2 replaces linear orchestration with a **StateGraph**. This enables complex conditional flows, parallel execution tracks, and an **Autonomous Feedback Loop**.
 
 ```mermaid
 graph TD
-    A[Niche/Topic] --> B[🏢 Dept 1: Strategy]
-    B --> C[🔎 Dept 2: Research]
-    C --> D[✍️ Dept 3: Narrative]
-    D --> E[🎨 Dept 4: Production]
-    E --> F[🎥 Final Assets]
+    A[Niche/Topic] --> B[🏢 Strategy Node]
+    B --> C[🔎 Research Node]
+    C --> D[✍️ Scripting Node]
+    D --> E[🔍 Quality Audit]
+    E -- "Score < 7" --> F[🛠️ Automatic Refinement]
+    F --> E
+    E -- "Score >= 7" --> G[🎨 Assets & Production]
+    G --> H[🎬 Media Generation]
 
-    subgraph "🏢 Phase 1: Strategy"
+    subgraph "🏢 Strategy Node"
     B1[Trend Hunter]
     B2[Audience Profiler]
-    B3[Project Manager]
+    B3[Competitor Analyst]
+    B4[Project Manager]
     end
 
-    subgraph "🔎 Phase 2: Intelligence"
+    subgraph "🔎 Research Node"
     C1[Deep Researcher]
-    C2[Investigative Journalist]
+    C2[Journalist]
     C3[Fact Checker]
     end
-
-    subgraph "✍️ Phase 3: Scripting"
-    D1[Script Architect]
-    D2[Lead Writer]
-    D3[Hook Master]
-    D4[Comedy Specialist]
-    end
-
-    subgraph "🎨 Phase 4: Creative"
-    E1[Art Director]
-    E2[Prompt Engineer]
-    E3[Audio Director]
-    E4[SEO Optimizer]
-    end
 ```
 
 ---
 
-## 🤖 The Swarm: 15 Highly Specialized Agents
+## 🕵️ Real-Time Intelligence & Grounding
 
-### 🏢 Department 1: Strategy & Growth
-*   **📡 Trend Hunter**: Scans market data to identify high-velocity viral potential.
-*   **👥 Audience Profiler**: Engineers the "Ideal Viewer Persona" to tailor tone and psychological hooks.
-*   **📋 Project Manager**: The "Brain" of the phase. It synthesizes all strategy into a **Project Bible**.
+### 🌍 Google Search Grounding
+Neural Swarm no longer relies solely on static training data. Strategic agents utilize **Gemini Grounding with Google Search** to:
+*   Retrieve up-to-the-minute market trends.
+*   Verify factual claims against live technical databases.
+*   Provide real-world citations and web sources for script validation.
+
+### 📊 Competition Intelligence
+The new **Competitor Analyst Agent** performs live scraping (via Grounding) to identify:
+*   Top-performing competitor videos in your niche.
+*   Winning thumbnail patterns and titles.
+*   Real engagement metrics and video URLs for direct reference in the UI.
+
+---
+
+## 🤖 The Swarm: Specialized Intelligence
+
+### 🏗️ Department 1: Strategy (Real-Time)
+*   **📡 Trend Hunter**: Scans for exploding topics using Google Trends API.
+*   **🕵️ Competitor Analyst**: Maps the competitive landscape with real links.
+*   **👥 Audience Profiler**: Engineers the "Ideal Persona" based on current niche data.
 
 ### 🔎 Department 2: Intelligence & Verification
-*   **🧠 Deep Researcher**: Digs into technical, historical, and scientific databases.
-*   **📰 Investigative Journalist**: Crafts the "Human Angle" and finds compelling, non-obvious stories.
-*   **✅ Fact Checker**: A rigorous terminal agent that verifies every claim against the research data.
+*   **🧠 Deep Researcher**: Digs into technical and historical databases with **Search Grounding**.
+*   **✅ Fact Checker**: Rigorous agent that cross-references all scripts against grounded research.
 
-### ✍️ Department 3: Creative Narrative
-*   **🏗️ Script Architect**: Designs the structural arc—ensuring optimal retention through pacing.
-*   **📝 Lead Writer**: Conversational engine. Writes the main dialogue in your target language.
-*   **🪝 Hook Master**: Hyper-focused on the first 15 seconds to minimize drop-off.
-*   **🎭 Comedy Specialist**: Adds wit, "easter eggs," and personality to the script.
-
-### 🎨 Department 4: Visual & Audio Production
-*   **🎭 Art Director**: Defines the "Visual DNA" (Lighting, Style, Palette).
-*   **🖼️ Prompt Engineer**: Converts visual concepts into technical prompts for **Nano Banana Pro**.
-*   **🎤 Audio Director**: Orchestrates the **Voice Studio** using native Gemini TTS.
-*   **🏷️ SEO Optimizer**: Generates high-CTR titles, metadata, and viral tags.
+### ✍️ Department 3: Narrative & Refinement
+*   **📝 Lead Writer**: Writes in the signature "Fenrir" epic style.
+*   **🎭 Editor en Jefe**: Automatically refines scripts if the Quality Audit finds issues.
 
 ---
 
-## 🚀 Extreme Performance Features
+## 🚀 Extreme Production Features
 
-### 💎 Gemini 3.0 & 2.5 Ecosystem
-Neural Swarm is built for the latest frontier models.
-*   **Gemini 3 Pro**: Used for complex reasoning and "Thinking" deep research.
-*   **Gemini 3 Flash**: Powers the high-speed scripting and strategy agents.
-*   **Gemini 2.5 Flash Image (Nano Banana)**: Ultra-fast visual generation.
-*   **Gemini 3 Pro Image (Nano Banana Pro)**: Professional-grade text-to-image with advanced reasoning.
-
-### 🎙️ Voice Studio (Native TTS)
-Forget robotic voices. Access **30+ Native Gemini Tones** like *Fenrir*, *Puck*, and *Zephyr*. Control style, pace, and emotion through natural language notes.
-
-### 🌎 Internationalization by Design
-Every agent prompt and UI label is dynamic. Edit prompts live in the browser to change the "Personality" of your swarm instantly.
+*   **🎙️ Voice Studio**: Native Gemini TTS with 30+ tones and emotional control.
+*   **🖼️ Nano Banana Pro**: High-fidelity visual creation using `gemini-3-pro-image-preview`.
+*   **⚙️ Live Prompt Editor**: Modify agent instructions directly in the browser.
+*   **🌐 Full Internationalization**: Support for multiple languages with a single click.
 
 ---
 
-## 🛠️ Deployment Guide
+## 🛠️ Quick Start
 
-### 1. Prerequisites
-*   Python 3.11+
-*   Google Gemini API Key ([Get it here](https://aistudio.google.com/))
+1.  **Clone & Install**:
+    ```bash
+    git clone https://github.com/monrroyag/Neural-Swarm-2.0-YouTube-Gemini.git
+    cd Neural-Swarm-2.0-YouTube-Gemini
+    pip install -r requirements.txt
+    ```
 
-### 2. Installation
-```bash
-# Clone the repository
-git clone https://github.com/monrroyag/Neural-Swarm-2.0-YouTube-Gemini.git
+2.  **Configuration**:
+    *   Start the server: `python run.py`.
+    *   Navigate to the **Settings** tab.
+    *   Enter your `GEMINI_API_KEY` ([Get it here](https://aistudio.google.com/)).
 
-# Enter the project
-cd Neural-Swarm-2.0-YouTube-Gemini
-
-# Install the dependencies
-pip install -r requirements.txt
-```
-
-### 3. Execution
-```bash
-python run.py
-```
-Open your browser at `http://localhost:8000`.
+3.  **Execute Swarm**:
+    Enter your niche in the Dashboard and click **IGNITE**.
 
 ---
 
 ## 🛡️ Security & Privacy
-> [!IMPORTANT]
-> **API Key Safety**: Neural Swarm **never** stores your API key in the source code or version control. All configuration is kept locally in `settings.json` (auto-ignored by Git). Your credentials stay on your machine.
+Neural Swarm **never** stores your API key in the source code. All configuration remains local in `settings.json`, which is excluded from version control.
 
 ---
 
 ## 🤝 The Creator
 Developed by **Agustín Arellano**. 
-Explore more work on [GitHub](https://github.com/monrroyag).
+Connect on [GitHub](https://github.com/monrroyag).
 
 ---
-**Neural Swarm v2.0** | *The Autonomous Future of Content Creation.*
+**Neural Swarm v2.2** | *The Autonomous Future of Content Creation.*
