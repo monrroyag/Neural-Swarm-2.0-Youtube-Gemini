@@ -81,7 +81,7 @@ def get_settings():
 
 @app.post("/api/settings")
 def update_settings(new_settings: dict):
-    settings_manager.update_settings(new_settings)
+    settings_manager.update(new_settings)
     return {"status": "ok", "settings": settings_manager.settings}
 
 @app.get("/api/i18n/{lang}")

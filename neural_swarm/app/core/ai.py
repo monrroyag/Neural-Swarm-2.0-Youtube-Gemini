@@ -18,8 +18,13 @@ def get_client():
             return None
     return _client_cache["instance"]
 
-# Lazy-loaded client proxy or just a placeholder for now
-try:
-    client = get_client()
-except Exception:
-    client = None
+class ClientProxy:
+    """Proxy object that always uses the latest initialized client."""
+    def __getattr__(self, name):
+        c = get_client()
+        if c is None:
+            raise AttributeError(f"Gemini Client not initialized. Please check your API Key in Settings (trying to access '{name}').")
+        return getattr(c, name)
+
+# This proxy object can be imported and will always proxy to the real client
+client = ClientProxy()
