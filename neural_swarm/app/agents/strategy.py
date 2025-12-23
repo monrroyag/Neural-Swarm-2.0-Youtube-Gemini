@@ -32,7 +32,13 @@ class TrendHunterAgent(SwarmAgent):
         
         try:
             result = retry_with_backoff(_call)
-            context.trend_opportunities = result.get("opportunities", [])
+            if isinstance(result, list):
+                context.trend_opportunities = result
+            elif isinstance(result, dict):
+                context.trend_opportunities = result.get("opportunities", [])
+            else:
+                context.trend_opportunities = []
+                
             await self.log(f"✅ Encontradas {len(context.trend_opportunities)} oportunidades")
             await manager.broadcast("Tendencias detectadas", "data_update", {"step": "trends", "data": context.trend_opportunities})
         except Exception as e:
@@ -94,7 +100,15 @@ class ProjectManagerAgent(SwarmAgent):
         
         try:
             context.project_bible = retry_with_backoff(_call)
-            topic = context.project_bible.get("selected_topic", {}).get("title", "Sin título")
+            
+            # Robust extraction of the selected topic title
+            if isinstance(context.project_bible, dict):
+                topic = context.project_bible.get("selected_topic", {}).get("title", "Sin título")
+            elif isinstance(context.project_bible, list) and len(context.project_bible) > 0:
+                topic = context.project_bible[0].get("title", "Sin título")
+            else:
+                topic = "Sin título"
+                
             await self.log(f"✅ Biblia creada: {topic}")
             await manager.broadcast("Biblia del Proyecto completada", "data_update", {"step": "bible", "data": context.project_bible})
         except Exception as e:
@@ -121,7 +135,13 @@ class CompetitorAnalystAgent(SwarmAgent):
         
         try:
             result = clean_and_parse_json(retry_with_backoff(_call))
-            context.competitor_analysis = result.get("competitors", [])
+            if isinstance(result, list):
+                context.competitor_analysis = result
+            elif isinstance(result, dict):
+                context.competitor_analysis = result.get("competitors", [])
+            else:
+                context.competitor_analysis = []
+                
             await self.log(f"✅ Analizados {len(context.competitor_analysis)} competidores clave")
             await manager.broadcast("Análisis de competencia completado", "data_update", {"step": "competitors", "data": context.competitor_analysis})
         except Exception as e:
