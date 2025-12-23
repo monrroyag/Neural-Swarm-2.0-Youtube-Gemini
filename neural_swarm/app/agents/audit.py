@@ -8,6 +8,7 @@ from ..core.i18n import i18n
 from ..core.utils import clean_and_parse_json, retry_with_backoff
 from ..core.websocket import manager
 from google.genai import types
+from ..models.project import ProjectContext
 
 class SpecialistAuditor(AgentBase):
     """Base class for specialized audit agents."""
