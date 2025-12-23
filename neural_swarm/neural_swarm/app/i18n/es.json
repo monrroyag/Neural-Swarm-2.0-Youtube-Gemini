@@ -1,0 +1,17 @@
+{
+    "ui": {
+        "dashboard": "Dashboard",
+        "library": "Librería",
+        "settings": "Configuración",
+        "ignite": "ENCENDER ENJAMBRE",
+        "niche_placeholder": "Ingresa Nicho / Tópico...",
+        "save": "GUARDAR",
+        "delete": "ELIMINAR"
+    },
+    "agents": {
+        "TrendHunter": {
+            "name": "📡 Trend Hunter",
+            "prompt": "Eres el Trend Hunter..."
+        }
+    }
+}

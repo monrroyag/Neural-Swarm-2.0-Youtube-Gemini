@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+google-genai
+python-multipart
+jinja2
+websockets
+pydantic
+aiofiles
+watchfiles

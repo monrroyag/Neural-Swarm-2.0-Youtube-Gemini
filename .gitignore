@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Project specific
+settings.json
+studio_db.json
+studio_audio/
+studio_images/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Brain / Artifacts (if uploaded from root, though they are usually in .gemini)
+.gemini/
+brain/
+task.md
+implementation_plan.md
+walkthrough.md
