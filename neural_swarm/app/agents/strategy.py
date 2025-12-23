@@ -102,3 +102,30 @@ class ProjectManagerAgent(SwarmAgent):
             context.project_bible = {"selected_topic": {"title": context.niche, "angle": "Análisis", "hook": "Descubre la verdad"}}
         
         return context
+
+class CompetitorAnalystAgent(SwarmAgent):
+    name: str = i18n.t("agents.CompetitorAnalyst.name")
+    department: str = "Strategy"
+    
+    async def execute(self, context: ProjectContext) -> ProjectContext:
+        await self.log(f"Analizando competencia en el nicho: {context.niche}...")
+        
+        prompt = i18n.get_prompt("CompetitorAnalyst", {
+            "niche": context.niche,
+            "date": datetime.now().strftime("%Y-%m-%d")
+        })
+        
+        def _call():
+            # This agent uses grounding via helper
+            return self.grounded_call(client, MODEL_FAST, prompt, response_mime_type="application/json")
+        
+        try:
+            result = clean_and_parse_json(retry_with_backoff(_call))
+            context.competitor_analysis = result.get("competitors", [])
+            await self.log(f"✅ Analizados {len(context.competitor_analysis)} competidores clave")
+            await manager.broadcast("Análisis de competencia completado", "data_update", {"step": "competitors", "data": context.competitor_analysis})
+        except Exception as e:
+            await self.log(f"⚠️ Error: {e}")
+            context.competitor_analysis = []
+        
+        return context

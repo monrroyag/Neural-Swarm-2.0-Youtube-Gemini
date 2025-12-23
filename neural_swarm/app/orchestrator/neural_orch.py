@@ -1,13 +1,16 @@
 import time
 import asyncio
 from datetime import datetime
+from typing import Dict, TypedDict, Annotated, List, Any
+
+from langgraph.graph import StateGraph, END
 
 from ..models.project import ProjectContext
 from ..core.database import Database
 from ..core.websocket import manager
 
 # Import Agents
-from ..agents.strategy import TrendHunterAgent, AudienceProfilerAgent, ProjectManagerAgent
+from ..agents.strategy import TrendHunterAgent, AudienceProfilerAgent, ProjectManagerAgent, CompetitorAnalystAgent
 from ..agents.research import DeepResearcherAgent, InvestigativeJournalistAgent, FactCheckerAgent
 from ..agents.narrative import ScriptArchitectAgent, LeadWriterAgent, HookMasterAgent, ComedySpecialistAgent
 from ..agents.art import ArtDirectorAgent, PromptEngineerAgent, ThumbnailStrategistAgent
@@ -17,12 +20,13 @@ from ..agents.audit import audit_panel
 from ..agents.editor import EditorAgent
 
 class NeuralSwarmOrchestrator:
-    """Orquestador del Enjambre Neural v2.0 - 15 agentes, 4 fases."""
+    """Orquestador del Enjambre Neural v2.2 - LangGraph Powered."""
     
     def __init__(self):
         # Dept 1: Strategy
         self.trend_hunter = TrendHunterAgent()
         self.audience_profiler = AudienceProfilerAgent()
+        self.competitor_analyst = CompetitorAnalystAgent()
         self.project_manager = ProjectManagerAgent()
         
         # Dept 2: Research
@@ -52,98 +56,137 @@ class NeuralSwarmOrchestrator:
         # New Departments (Audit & Editor)
         self.audit_panel = audit_panel
         self.editor = EditorAgent()
+
+        # Build Graph
+        self.graph = self._build_graph()
     
     async def log(self, message: str, phase: str = ""):
         prefix = f"[🧠 NeuralSwarm{' | ' + phase if phase else ''}]"
         print(f"{prefix} {message}")
         await manager.broadcast(f"{prefix} {message}", "info")
-    
-    async def run_phase_1_strategy(self, context: ProjectContext) -> ProjectContext:
-        await self.log("═══════════════════════════════════════════", "FASE 1")
+
+    def _build_graph(self):
+        workflow = StateGraph(ProjectContext)
+
+        # Nodes
+        workflow.add_node("strategy", self.run_phase_1_strategy)
+        workflow.add_node("research", self.run_phase_2_research)
+        workflow.add_node("scripting", self.run_phase_3_scripting)
+        workflow.add_node("quality_check", self.run_quality_audit)
+        workflow.add_node("refine", self.run_script_refinement) # NEW
+        workflow.add_node("assets", self.run_phase_4_assets)
+        workflow.add_node("media", self.generate_media_node)
+
+        # Edges
+        workflow.set_entry_point("strategy")
+        workflow.add_edge("strategy", "research")
+        workflow.add_edge("research", "scripting")
+        workflow.add_edge("scripting", "quality_check")
+        
+        # Conditional Edge: Feedback Loop
+        workflow.add_conditional_edges(
+            "quality_check",
+            self.should_refine_script,
+            {
+                "refine": "refine", # Goes to refinement first
+                "proceed": "assets"
+            }
+        )
+        
+        workflow.add_edge("refine", "quality_check") # Re-audit after refinement
+        workflow.add_edge("assets", "media")
+        workflow.add_edge("media", END)
+
+        return workflow.compile()
+
+    # --- LangGraph Node Methods ---
+
+    async def run_phase_1_strategy(self, state: ProjectContext):
         await self.log("🏢 FASE 1: ESTRATEGIA Y DIRECCIÓN", "FASE 1")
-        
-        # Parallel: Trend Hunter + Audience Profiler
         await asyncio.gather(
-            self.trend_hunter.execute(context),
-            self.audience_profiler.execute(context)
+            self.trend_hunter.execute(state),
+            self.audience_profiler.execute(state),
+            self.competitor_analyst.execute(state)
         )
-        
-        # Sequential: Project Manager
-        context = await self.project_manager.execute(context)
-        
-        await self.log("✅ FASE 1 COMPLETADA", "FASE 1")
-        return context
-    
-    async def run_phase_2_research(self, context: ProjectContext) -> ProjectContext:
-        await self.log("═══════════════════════════════════════════", "FASE 2")
+        await self.project_manager.execute(state)
+        return state
+
+    async def run_phase_2_research(self, state: ProjectContext):
         await self.log("🔎 FASE 2: INTELIGENCIA E INVESTIGACIÓN", "FASE 2")
-        
-        # Parallel: Deep Researcher + Investigative Journalist
         await asyncio.gather(
-            self.deep_researcher.execute(context),
-            self.investigative_journalist.execute(context)
+            self.deep_researcher.execute(state),
+            self.investigative_journalist.execute(state)
         )
-        
-        # Sequential: Fact Checker
-        context = await self.fact_checker.execute(context)
-        
-        await self.log("✅ FASE 2 COMPLETADA", "FASE 2")
-        return context
-    
-    async def run_phase_3_scripting(self, context: ProjectContext) -> ProjectContext:
-        await self.log("═══════════════════════════════════════════", "FASE 3")
+        await self.fact_checker.execute(state)
+        return state
+
+    async def run_phase_3_scripting(self, state: ProjectContext):
         await self.log("✍️ FASE 3: NARRATIVA Y GUION", "FASE 3")
+        await self.script_architect.execute(state)
+        await self.lead_writer.execute(state)
+        await self.hook_master.execute(state)
+        await self.comedy_specialist.execute(state)
+        return state
+
+    async def run_quality_audit(self, state: ProjectContext):
+        await self.log("🔍 CONTROL DE CALIDAD: AUDITORÍA", "AUDIT")
+        await self.audit_panel.execute(state)
+        return state
+
+    async def run_script_refinement(self, state: ProjectContext):
+        await self.log("✍️ REFINANDO GUIÓN SEGÚN AUDITORÍA...", "REFINE")
+        issues = "\n".join([f"- {i[0]}: {i[1]}" for i in state.audit_report.get("top_issues", [])])
         
-        # Sequential pipeline
-        context = await self.script_architect.execute(context)
-        context = await self.lead_writer.execute(context)
-        context = await self.hook_master.execute(context)
-        context = await self.comedy_specialist.execute(context)
-        
-        await self.log("✅ FASE 3 COMPLETADA", "FASE 3")
-        return context
-    
-    async def run_phase_4_assets(self, context: ProjectContext) -> ProjectContext:
-        await self.log("═══════════════════════════════════════════", "FASE 4")
+        # Refine each block
+        for block in state.final_script:
+            original = block.get("audio_text", "")
+            refined = await self.editor.refine_text(original, issues)
+            block["audio_text"] = refined
+            
+        await self.log("✅ Guion refinado por el Editor en Jefe")
+        return state
+
+    def should_refine_script(self, state: ProjectContext):
+        score = state.audit_report.get("overall_score", 10)
+        if score < 7:
+            print(f"⚠️ Calidad insuficiente ({score}/10). Re-escritura iniciada.")
+            return "refine"
+        return "proceed"
+
+    async def run_phase_4_assets(self, state: ProjectContext):
         await self.log("🎨 FASE 4: PRODUCCIÓN DE ACTIVOS", "FASE 4")
-        
         async def visual_track():
-            await self.art_director.execute(context)
-            await self.prompt_engineer.execute(context)
-            await self.thumbnail_strategist.execute(context)
+            await self.art_director.execute(state)
+            await self.prompt_engineer.execute(state)
+            await self.thumbnail_strategist.execute(state)
         
         await asyncio.gather(
             visual_track(),
-            self.audio_director.execute(context),
-            self.seo_optimizer.execute(context)
+            self.audio_director.execute(state),
+            self.seo_optimizer.execute(state)
         )
-        
-        await self.log("✅ FASE 4 COMPLETADA", "FASE 4")
-        return context
-    
-    async def generate_media(self, context: ProjectContext, project_id: str) -> ProjectContext:
+        return state
+
+    async def generate_media_node(self, state: ProjectContext):
         await self.log("🎬 GENERACIÓN DE MEDIA", "MEDIA")
-        
         # Generate images
-        for i, prompt_data in enumerate(context.visual_prompts):
-            filename = await self.image_agent.generate_image(prompt_data.get("prompt", ""), project_id, f"block_{i}")
-            if filename: context.generated_images.append(filename)
+        for i, prompt_data in enumerate(state.visual_prompts):
+            filename = await self.image_agent.generate_image(prompt_data.get("prompt", ""), state.project_id, f"block_{i}")
+            if filename: state.generated_images.append(filename)
         
         # Thumbnail
-        thumb_prompt = context.thumbnail_concept.get("technical_prompt", "")
+        thumb_prompt = state.thumbnail_concept.get("technical_prompt", "")
         if thumb_prompt:
-            thumb_file = await self.image_agent.generate_image(thumb_prompt, project_id, "thumbnail")
-            if thumb_file: context.thumbnail_concept["generated_file"] = thumb_file
+            thumb_file = await self.image_agent.generate_image(thumb_prompt, state.project_id, "thumbnail")
+            if thumb_file: state.thumbnail_concept["generated_file"] = thumb_file
         
         # Audio
-        for i, block in enumerate(context.final_script):
-            audio_text = block.get("audio_text", "")
-            audio_file = await self.voice_agent.synthesize([block], project_id, i) # Pass list and offset
-            if audio_file: context.audio_files.append(audio_file[0])
+        for i, block in enumerate(state.final_script):
+            audio_file = await self.voice_agent.synthesize([block], state.project_id, i)
+            if audio_file: state.audio_files.append(audio_file[0])
         
-        await self.log(f"✅ Media generada", "MEDIA")
-        return context
-    
+        return state
+
     def compile_project(self, context: ProjectContext) -> dict:
         script_blocks = []
         for i, block in enumerate(context.final_script):
@@ -171,33 +214,32 @@ class NeuralSwarmOrchestrator:
             "niche": context.niche,
             "topic": context.project_bible.get("selected_topic", {}).get("title", context.niche),
             "date": datetime.now().isoformat(),
-            "status": "Neural Swarm v2.0 - Completed",
+            "status": "Neural Swarm v2.2 - LangGraph Completed",
             "script": script_blocks,
             "metadata": metadata,
             "project_bible": context.project_bible,
             "audience_profile": context.audience_profile,
+            "competitor_analysis": context.competitor_analysis,
+            "audit_report": context.audit_report,
             "art_direction": context.art_direction,
             "audio_instructions": context.audio_instructions,
-            "neural_swarm_version": "2.0"
+            "neural_swarm_version": "2.2"
         }
     
     async def run_full_pipeline(self, niche: str) -> dict:
         project_id = f"proj_{int(time.time())}"
-        await self.log("🚀 ENJAMBRE NEURAL v2.0 - INICIANDO", "SYSTEM")
+        await self.log("🚀 ENJAMBRE NEURAL v2.2 - INICIANDO (LANGGRAPH)", "SYSTEM")
         
-        context = ProjectContext(project_id=project_id, niche=niche)
+        initial_state = ProjectContext(project_id=project_id, niche=niche)
         try:
-            context = await self.run_phase_1_strategy(context)
-            context = await self.run_phase_2_research(context)
-            context = await self.run_phase_3_scripting(context)
-            context = await self.run_phase_4_assets(context)
-            context = await self.generate_media(context, project_id)
+            # Run the graph
+            final_state = await self.graph.ainvoke(initial_state)
             
-            project = self.compile_project(context)
+            project = self.compile_project(final_state)
             Database.add_project(project)
             
             await self.log(f"✅ PRODUCCIÓN COMPLETADA: {project.get('topic')[:50]}...", "SYSTEM")
             return project
         except Exception as e:
-            await self.log(f"❌ ERROR CRÍTICO: {e}", "SYSTEM")
+            await self.log(f"❌ ERROR CRÍTICO EN EL GRAFO: {e}", "SYSTEM")
             raise e

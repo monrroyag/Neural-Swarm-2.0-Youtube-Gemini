@@ -132,22 +132,30 @@ async def retry_audio(req: RetryRequest):
 @app.post("/api/projects/{project_id}/audit_panel")
 async def audit_panel_endpoint(project_id: str):
     db = Database.load()
-    project = next((p for p in db["projects"] if p["id"] == project_id), None)
-    if not project:
+    project_dict = next((p for p in db["projects"] if p["id"] == project_id), None)
+    if not project_dict:
         raise HTTPException(status_code=404, detail="Project not found")
     
-    panel_report = await neural_swarm.audit_panel.full_audit(project)
+    # Convert dict to ProjectContext for the auditor
+    from .models.project import ProjectContext
+    # Basic conversion (this is a bit manual but safe)
+    context = ProjectContext(project_id=project_id, niche=project_dict.get("niche", ""))
+    context.final_script = project_dict.get("script", [])
+    context.project_bible = project_dict.get("project_bible", {})
     
-    project["audit_report"] = {
+    context = await neural_swarm.audit_panel.execute(context)
+    panel_report = context.audit_report
+    
+    project_dict["audit_report"] = {
         "type": "panel",
         "global_score": panel_report["global_score"],
         "global_verdict": panel_report["global_verdict"],
         "critique": panel_report["global_verdict"],
-        "suggestions": [f"[{agent}] {issue}" for agent, issue in panel_report["top_issues"]],
+        "suggestions": [f"[{report.get('agent_name')}] {report.get('top_issues', ['N/A'])[0] if report.get('top_issues') else 'N/A'}" for report in panel_report["agent_reports"]],
         "panel": panel_report
     }
-    Database.update_project(project)
-    return project
+    Database.update_project(project_dict)
+    return project_dict
 
 @app.post("/api/editor/expand")
 async def editor_expand(req: EditorRequest):

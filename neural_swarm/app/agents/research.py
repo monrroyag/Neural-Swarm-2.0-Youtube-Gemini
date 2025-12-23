@@ -20,8 +20,7 @@ class DeepResearcherAgent(SwarmAgent):
         })
         
         def _call():
-            res = client.models.generate_content(model=MODEL_RESEARCH_ID, contents=prompt)
-            return res.text
+            return self.grounded_call(client, MODEL_RESEARCH_ID, prompt)
         
         try:
             context.deep_research = retry_with_backoff(_call)

@@ -379,6 +379,39 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- COMPETITOR ANALYSIS -->
+                        <div class="p-6 border-b border-[#1a1a1a]">
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Competitor
+                                Analysis</h3>
+                            <div class="space-y-3">
+                                <template
+                                    x-if="currentProject.competitor_analysis && currentProject.competitor_analysis.length">
+                                    <template x-for="comp in currentProject.competitor_analysis">
+                                        <div class="p-3 bg-[#111] border border-[#222] rounded-lg">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <div class="text-[10px] font-bold text-white truncate max-w-[150px]"
+                                                    x-text="comp.title"></div>
+                                                <a :href="comp.link" target="_blank"
+                                                    class="text-[9px] text-purple-400 hover:underline">Link</a>
+                                            </div>
+                                            <div
+                                                class="flex items-center justify-between text-[8px] text-slate-500 mb-2">
+                                                <span x-text="comp.views"></span>
+                                                <span x-text="comp.published_date"></span>
+                                            </div>
+                                            <div class="text-[9px] text-slate-400 leading-tight italic"
+                                                x-text="'Strategy: ' + comp.winning_strategy"></div>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template
+                                    x-if="!currentProject.competitor_analysis || !currentProject.competitor_analysis.length">
+                                    <div class="text-[10px] text-slate-700 italic">No competitors analyzed yet.</div>
+                                </template>
+                            </div>
+                        </div>
+
                         <div class="flex-1 overflow-y-auto p-6 scrollbar-hide">
                             <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Audit Reports
                             </h3>
@@ -441,7 +474,7 @@
                 projects: [],
                 currentProject: null,
                 data: {
-                    trends: null, audience_profile: null, project_bible: null,
+                    trends: null, audience_profile: null, competitor_analysis: null, project_bible: null,
                     research_deep: null, research_human: null, research_verified: null,
                     script_outline: null, raw_script: null, script_hook: null,
                     script_final: null, art_direction: null, visual_prompts: null,
@@ -636,6 +669,7 @@
                             const mapping = {
                                 "trends": "trends",
                                 "audience": "audience_profile",
+                                "competitors": "competitor_analysis",
                                 "bible": "project_bible",
                                 "research_deep": "research_deep",
                                 "research_human": "research_human",

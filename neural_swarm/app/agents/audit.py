@@ -75,15 +75,15 @@ class AuditPanel:
             SpecialistAuditor("Especialista en Retención", "🧲", ["Hook 5 Segundos", "Curiosity Gaps", "Pattern Interrupts"], "Evalúas técnicas de captación...")
         ]
     
-    async def full_audit(self, project: Dict) -> Dict:
-        script_text = "\n".join([f"[{block['section']}] {block['audio_text']}" for block in project.get('script', [])])
-        topic = project.get('topic', '')
-        niche = project.get('niche', '')
-        metadata = project.get('metadata', {})
+    async def log(self, message: str, type: str = "info"):
+        await manager.broadcast(f"[AuditPanel] {message}", type)
+
+    async def execute(self, state: ProjectContext) -> ProjectContext:
+        script_text = "\n".join([f"[{block.get('section', 'N/A')}] {block.get('audio_text', '')}" for block in state.final_script])
         
-        await manager.broadcast(f"[AuditPanel] 🎯 Convocando panel de 7 expertos...", "info")
+        await self.log("🎯 Convocando panel de 7 expertos...")
         
-        tasks = [agent.evaluate(script_text, topic, niche, metadata) for agent in self.agents]
+        tasks = [agent.evaluate(script_text, state.project_bible.get("selected_topic", {}).get("title", ""), state.niche, {}) for agent in self.agents]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
         agent_reports = []
@@ -106,8 +106,8 @@ class AuditPanel:
         
         global_score = round(total_score / valid_count, 1) if valid_count > 0 else 0
         
-        panel_report = {
-            "panel_version": "2.0",
+        state.audit_report = {
+            "panel_version": "2.2",
             "global_score": global_score,
             "global_verdict": "Aprobado" if global_score >= 7 else "Revisar",
             "agent_reports": agent_reports,
@@ -116,7 +116,7 @@ class AuditPanel:
             "timestamp": datetime.now().isoformat()
         }
         
-        await manager.broadcast(f"[AuditPanel] ✅ Panel completado. Score Global: {global_score}/10", "success")
-        return panel_report
+        await self.log(f"✅ Panel completado. Score Global: {global_score}/10", "success")
+        return state
 
 audit_panel = AuditPanel()

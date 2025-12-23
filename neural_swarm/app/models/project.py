@@ -10,7 +10,11 @@ class ProjectContext:
     # Phase 1: Strategy outputs
     trend_opportunities: List[dict] = field(default_factory=list)
     audience_profile: dict = field(default_factory=dict)
+    competitor_analysis: List[dict] = field(default_factory=list)
     project_bible: dict = field(default_factory=dict)
+    
+    # Audit & Quality
+    audit_report: dict = field(default_factory=dict)
     
     # Phase 2: Research outputs
     deep_research: str = ""

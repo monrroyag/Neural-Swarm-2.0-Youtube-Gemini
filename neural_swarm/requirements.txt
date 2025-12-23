@@ -5,3 +5,6 @@ pydantic
 python-multipart
 wave
 dataclasses
+langgraph
+langchain-core
+langchain-google-genai
