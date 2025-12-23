@@ -50,6 +50,12 @@ async def start_generation(data: dict, background_tasks: BackgroundTasks):
     background_tasks.add_task(neural_swarm.run_full_pipeline, niche)
     return {"status": "started", "message": f"🧠 Neural Swarm v2.0 iniciado para: {niche}"}
 
+@app.post("/api/stop")
+async def stop_generation():
+    neural_swarm.stop()
+    await manager.broadcast("🛑 Sistema solicitado detenerse...", "info")
+    return {"status": "stopping", "message": "Neural Swarm stopping at next checkpoint..."}
+
 @app.get("/api/projects")
 def get_projects():
     return Database.load()["projects"]

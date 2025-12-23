@@ -57,6 +57,8 @@ class NeuralSwarmOrchestrator:
         self.audit_panel = audit_panel
         self.editor = EditorAgent()
 
+        self.stop_requested = False
+
         # Build Graph
         self.graph = self._build_graph()
     
@@ -64,6 +66,16 @@ class NeuralSwarmOrchestrator:
         prefix = f"[🧠 NeuralSwarm{' | ' + phase if phase else ''}]"
         print(f"{prefix} {message}")
         await manager.broadcast(f"{prefix} {message}", "info")
+
+    async def check_stop(self):
+        if self.stop_requested:
+            await self.log("🛑 DETENCIÓN SOLICITADA POR EL USUARIO. Abortando misión...", "SYSTEM")
+            raise Exception("Swarm stopped by user")
+
+    def stop(self):
+        """Signals the orchestrator to stop at the next checkpoint."""
+        self.stop_requested = True
+        print("🛑 Orchestrator Stop Signal Received.")
 
     def _build_graph(self):
         workflow = StateGraph(ProjectContext)
@@ -102,6 +114,7 @@ class NeuralSwarmOrchestrator:
     # --- LangGraph Node Methods ---
 
     async def run_phase_1_strategy(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("🏢 FASE 1: ESTRATEGIA Y DIRECCIÓN", "FASE 1")
         await asyncio.gather(
             self.trend_hunter.execute(state),
@@ -112,6 +125,7 @@ class NeuralSwarmOrchestrator:
         return state
 
     async def run_phase_2_research(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("🔎 FASE 2: INTELIGENCIA E INVESTIGACIÓN", "FASE 2")
         await asyncio.gather(
             self.deep_researcher.execute(state),
@@ -121,6 +135,7 @@ class NeuralSwarmOrchestrator:
         return state
 
     async def run_phase_3_scripting(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("✍️ FASE 3: NARRATIVA Y GUION", "FASE 3")
         await self.script_architect.execute(state)
         await self.lead_writer.execute(state)
@@ -129,11 +144,13 @@ class NeuralSwarmOrchestrator:
         return state
 
     async def run_quality_audit(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("🔍 CONTROL DE CALIDAD: AUDITORÍA", "AUDIT")
         await self.audit_panel.execute(state)
         return state
 
     async def run_script_refinement(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("✍️ REFINANDO GUIÓN SEGÚN AUDITORÍA...", "REFINE")
         issues = "\n".join([f"- {i[0]}: {i[1]}" for i in state.audit_report.get("top_issues", [])])
         
@@ -154,6 +171,7 @@ class NeuralSwarmOrchestrator:
         return "proceed"
 
     async def run_phase_4_assets(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("🎨 FASE 4: PRODUCCIÓN DE ACTIVOS", "FASE 4")
         async def visual_track():
             await self.art_director.execute(state)
@@ -168,6 +186,7 @@ class NeuralSwarmOrchestrator:
         return state
 
     async def generate_media_node(self, state: ProjectContext):
+        await self.check_stop()
         await self.log("🎬 GENERACIÓN DE MEDIA", "MEDIA")
         # Generate images
         for i, prompt_data in enumerate(state.visual_prompts):
@@ -227,6 +246,7 @@ class NeuralSwarmOrchestrator:
         }
     
     async def run_full_pipeline(self, niche: str) -> dict:
+        self.stop_requested = False
         project_id = f"proj_{int(time.time())}"
         await self.log("🚀 ENJAMBRE NEURAL v2.2 - INICIANDO (LANGGRAPH)", "SYSTEM")
         

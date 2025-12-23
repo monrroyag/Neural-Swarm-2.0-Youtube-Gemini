@@ -92,7 +92,14 @@
                     <button @click="startSwarm()" :disabled="processing"
                         class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded text-sm font-bold shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all disabled:opacity-50">
                         <span x-show="!processing">IGNITE</span>
-                        <span x-show="processing" class="animate-spin text-lg">🌀</span>
+                        <span x-show="processing" class="flex items-center gap-2">
+                            <span class="animate-spin text-lg">🌀</span>
+                            <span>ACTIVE</span>
+                        </span>
+                    </button>
+                    <button x-show="processing" @click="stopSwarm()"
+                        class="bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/50 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest transition-all">
+                        Stop Swarm
                     </button>
                 </div>
             </div>
@@ -867,6 +874,15 @@
                         this.logs.unshift({ timestamp: new Date().toLocaleTimeString(), message: "Start failed: " + e, type: "error" });
                     } finally {
                         this.processing = false;
+                    }
+                },
+
+                async stopSwarm() {
+                    this.logs.unshift({ timestamp: new Date().toLocaleTimeString(), message: "🛑 DETENTION SIGNAL SENT TO SWARM...", type: "warning" });
+                    try {
+                        await fetch('/api/stop', { method: 'POST' });
+                    } catch (e) {
+                        console.error("Stop failed", e);
                     }
                 }
             }
