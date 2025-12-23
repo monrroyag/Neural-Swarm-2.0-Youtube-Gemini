@@ -1,8 +1,8 @@
-# 🧠 Neural Swarm v2.2: The Ultimate Autonomous YouTube Factory
+# 🧠 Neural Swarm v2.2.6: The Ultimate Autonomous YouTube Factory
 
-> **The Sovereign AI Workforce.** Neural Swarm v2.2 is an industrial-grade, multi-agent orchestration framework designed to automate the entire lifecycle of YouTube content production. Built on **LangGraph** and powered by the **Google Gemini 3.0 & 2.5** ecosystem, it deploys **15 specialized agents** to transform a single niche into a viral-ready video production.
+> **The Sovereign AI Workforce.** Neural Swarm v2.2.6 is an industrial-grade, multi-agent orchestration framework designed to automate the entire lifecycle of YouTube content production. Built on **LangGraph** and powered by the **Google Gemini 3.0 & 2.5** ecosystem, it deploys **15 specialized agents** to transform a single niche into a viral-ready video production.
 
-![Neural Swarm Banner](https://img.shields.io/badge/Neural_Swarm-v2.2-purple?style=for-the-badge&logo=google-gemini)
+![Neural Swarm Banner](https://img.shields.io/badge/Neural_Swarm-v2.2.6-purple?style=for-the-badge&logo=google-gemini)
 ![LangGraph](https://img.shields.io/badge/Orchestrator-LangGraph-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Production-Ready-green?style=for-the-badge)
 
@@ -17,6 +17,11 @@ The most powerful feature of v2.2 is its **Self-Correcting Intelligence**. The o
 *   **Audit Check**: When a script is generated, it's sent to the `AuditPanel`.
 *   **The Threshold**: If the global quality score is below **7/10**, the graph rejects the content.
 *   **Iterative Refinement**: The `Editor en Jefe` receives the full audit critique and the original script, re-writing it to address specific flaws. The process repeats until the quality threshold is met.
+
+### 🛑 Emergency Stop & Control (v2.2.6)
+Total control over the Swarm. The new **Stop Swarm** functionality allows you to halt the entire production pipeline at the next checkpoint. This is critical for:
+*   **Saving API Quota**: Stop the generation if the niche or strategy isn't meeting expectations early on.
+*   **Real-Time Status**: A persistent "ACTIVE" indicator keeps you informed of the Swarm's heartbeat.
 
 ```mermaid
 graph TD
