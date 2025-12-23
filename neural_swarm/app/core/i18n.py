@@ -28,6 +28,18 @@ class I18nManager:
             self.translations['es'] = self.get_defaults('es')
             self.save_translation('es', self.translations['es'])
 
+    def load_language(self, lang: str):
+        """Ensures a language is available in the translations cache."""
+        filepath = os.path.join(self.i18n_dir, f"{lang}.json")
+        if os.path.exists(filepath):
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    self.translations[lang] = json.load(f)
+            except Exception:
+                pass
+        elif lang == 'es':
+            self.translations['es'] = self.get_defaults('es')
+
     def get_defaults(self, lang: str) -> Dict[str, Any]:
         # This will be populated with all UI and Prompt strings
         return {
