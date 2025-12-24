@@ -42,4 +42,4 @@ class EditorAgent(AgentBase):
         })
         def _call():
              return client.models.generate_content(model=MODEL_FAST, contents=prompt).text
-        return retry_with_backoff(_call)
+        return await retry_with_backoff(_call)

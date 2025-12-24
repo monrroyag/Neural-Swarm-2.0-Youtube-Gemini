@@ -161,13 +161,20 @@ class NeuralSwarmOrchestrator:
             block["audio_text"] = refined
             
         await self.log("✅ Guion refinado por el Editor en Jefe")
+        state.refinement_count += 1
         return state
 
     def should_refine_script(self, state: ProjectContext):
         score = state.audit_report.get("overall_score", 10)
-        if score < 7:
-            print(f"⚠️ Calidad insuficiente ({score}/10). Re-escritura iniciada.")
+        max_refinements = 3
+        
+        if score < 7 and state.refinement_count < max_refinements:
+            print(f"⚠️ Calidad insuficiente ({score}/10). Re-escritura iniciada (Intento {state.refinement_count + 1}/{max_refinements}).")
             return "refine"
+        
+        if state.refinement_count >= max_refinements and score < 7:
+            print(f"⚠️ Se alcanzó el máximo de refinamientos ({max_refinements}). Procediendo con la mejor versión disponible.")
+            
         return "proceed"
 
     async def run_phase_4_assets(self, state: ProjectContext):
@@ -206,42 +213,54 @@ class NeuralSwarmOrchestrator:
         
         return state
 
-    def compile_project(self, context: ProjectContext) -> dict:
+    def compile_project(self, context) -> dict:
+        # Safe access helper for LangGraph state (can be dict or object)
+        def get_val(obj, key, default):
+            if hasattr(obj, key): return getattr(obj, key)
+            if isinstance(obj, dict): return obj.get(key, default)
+            return default
+
+        final_script = get_val(context, "final_script", [])
+        visual_prompts = get_val(context, "visual_prompts", [])
+        generated_images = get_val(context, "generated_images", [])
+        project_bible = get_val(context, "project_bible", {})
+        seo_package = get_val(context, "seo_package", {})
+        thumbnail_concept = get_val(context, "thumbnail_concept", {})
+        
         script_blocks = []
-        for i, block in enumerate(context.final_script):
+        for i, block in enumerate(final_script):
             script_blocks.append({
                 "section": block.get("section", f"BLOQUE_{i+1}"),
                 "audio_text": block.get("audio_text", ""),
-                "visual_prompt": context.visual_prompts[i]["prompt"] if i < len(context.visual_prompts) else "",
+                "visual_prompt": visual_prompts[i].get("prompt", "") if i < len(visual_prompts) else "",
                 "word_count": block.get("word_count", len(block.get("audio_text", "").split())),
                 "duration_seconds": block.get("duration_seconds", 30),
                 "audio_file": block.get("audio_file", ""),
-                "generated_images": [context.generated_images[i]] if i < len(context.generated_images) else []
+                "generated_images": [generated_images[i]] if i < len(generated_images) else []
             })
         
-        seo = context.seo_package
         metadata = {
-            "title": seo.get("titles", {}).get("primary", context.project_bible.get("selected_topic", {}).get("title", "")),
-            "description": seo.get("description", {}).get("full_description", ""),
-            "tags": ", ".join(seo.get("tags", [])),
-            "thumbnail_prompt": context.thumbnail_concept.get("technical_prompt", ""),
-            "thumbnail_file": context.thumbnail_concept.get("generated_file", "")
+            "title": seo_package.get("titles", {}).get("primary", project_bible.get("selected_topic", {}).get("title", "")),
+            "description": seo_package.get("description", {}).get("full_description", ""),
+            "tags": ", ".join(seo_package.get("tags", [])),
+            "thumbnail_prompt": thumbnail_concept.get("technical_prompt", ""),
+            "thumbnail_file": thumbnail_concept.get("generated_file", "")
         }
         
         return {
-            "id": context.project_id,
-            "niche": context.niche,
-            "topic": context.project_bible.get("selected_topic", {}).get("title", context.niche),
+            "id": get_val(context, "project_id", "unknown"),
+            "niche": get_val(context, "niche", "unknown"),
+            "topic": project_bible.get("selected_topic", {}).get("title", get_val(context, "niche", "unknown")),
             "date": datetime.now().isoformat(),
             "status": "Neural Swarm v2.2 - LangGraph Completed",
             "script": script_blocks,
             "metadata": metadata,
-            "project_bible": context.project_bible,
-            "audience_profile": context.audience_profile,
-            "competitor_analysis": context.competitor_analysis,
-            "audit_report": context.audit_report,
-            "art_direction": context.art_direction,
-            "audio_instructions": context.audio_instructions,
+            "project_bible": project_bible,
+            "audience_profile": get_val(context, "audience_profile", {}),
+            "competitor_analysis": get_val(context, "competitor_analysis", []),
+            "audit_report": get_val(context, "audit_report", {}),
+            "art_direction": get_val(context, "art_direction", {}),
+            "audio_instructions": get_val(context, "audio_instructions", {}),
             "neural_swarm_version": "2.2"
         }
     

@@ -40,7 +40,7 @@ class VoiceAgent(AgentBase):
                 )
 
             try:
-                res = retry_with_backoff(_call)
+                res = await retry_with_backoff(_call)
                 if not res.candidates or not res.candidates[0].content.parts or not res.candidates[0].content.parts[0].inline_data:
                     raise Exception("No audio data received from API")
                 
@@ -83,7 +83,7 @@ class ImageAgent(AgentBase):
             )
 
         try:
-            res = retry_with_backoff(_call)
+            res = await retry_with_backoff(_call)
             if not res.candidates or not res.candidates[0].content.parts:
                 raise Exception("No image data received")
             

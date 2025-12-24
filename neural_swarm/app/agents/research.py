@@ -23,7 +23,7 @@ class DeepResearcherAgent(SwarmAgent):
             return self.grounded_call(client, MODEL_RESEARCH_ID, prompt)
         
         try:
-            context.deep_research = retry_with_backoff(_call)
+            context.deep_research = await retry_with_backoff(_call)
             await self.log(f"✅ Investigación completada ({len(context.deep_research)} chars)")
             await manager.broadcast("Deep Research finalizado", "data_update", {"step": "research_deep", "data": context.deep_research})
         except Exception as e:
@@ -49,7 +49,7 @@ class InvestigativeJournalistAgent(SwarmAgent):
             return res.text
         
         try:
-            context.human_stories = retry_with_backoff(_call)
+            context.human_stories = await retry_with_backoff(_call)
             await self.log(f"✅ Historias encontradas ({len(context.human_stories)} chars)")
             await manager.broadcast("Historias Humanas detectadas", "data_update", {"step": "research_human", "data": context.human_stories})
         except Exception as e:
@@ -75,7 +75,7 @@ class FactCheckerAgent(SwarmAgent):
             return res.text
         
         try:
-            context.verified_research = retry_with_backoff(_call)
+            context.verified_research = await retry_with_backoff(_call)
             await self.log(f"✅ Investigación verificada ({len(context.verified_research)} chars)")
             await manager.broadcast("Dossier de Verdad compilado", "data_update", {"step": "research_verified", "data": context.verified_research})
         except Exception as e:

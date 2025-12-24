@@ -37,7 +37,7 @@ class ScriptArchitectAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             context.script_outline = result.get("outline", [])
             await self.log(f"✅ Escaleta creada: {len(context.script_outline)} bloques")
             await manager.broadcast("Escaleta Narrativa definida", "data_update", {"step": "script_outline", "data": context.script_outline})
@@ -73,7 +73,7 @@ class LeadWriterAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             context.raw_script = result.get("script", [])
             await self.log(f"✅ Guion escrito: {len(context.raw_script)} bloques")
             await manager.broadcast("Borrador del Guion completado", "data_update", {"step": "script_raw", "data": context.raw_script})
@@ -105,7 +105,7 @@ class HookMasterAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             selected = result.get("selected_hook", {})
             context.hooked_intro = selected.get("text", current_hook)
             if context.raw_script:
@@ -138,7 +138,7 @@ class ComedySpecialistAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             context.final_script = result.get("enhanced_script", context.raw_script)
             await self.log(f"✅ Guion mejorado")
             await manager.broadcast("Guion Final pulido (Comedia + Punch-ups)", "data_update", {"step": "script_final", "data": context.final_script})

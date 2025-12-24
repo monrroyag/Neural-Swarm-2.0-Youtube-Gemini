@@ -20,9 +20,15 @@ class SwarmAgent(AgentBase):
         from google.genai import types
         grounding_tool = types.Tool(google_search=types.GoogleSearch())
         
+        # NOTE: Gemini API currently does not support tool use with response_mime_type="application/json"
+        # We fallback to text/plain if tools are used, trusting the prompt to guide JSON output format.
+        effective_mime_type = response_mime_type
+        if response_mime_type == "application/json":
+            effective_mime_type = "text/plain"
+
         config = types.GenerateContentConfig(
             tools=[grounding_tool],
-            response_mime_type=response_mime_type
+            response_mime_type=effective_mime_type
         )
         
         res = client.models.generate_content(

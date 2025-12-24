@@ -42,6 +42,54 @@
         "SpecialistAuditor": {
             "name": "🔍 Auditor Especialista",
             "prompt": "ERES: {agent_name} - Experto evaluador de contenido para YouTube.\nTU ENFOQUE: {focus_prompt}\n\nCONTENIDO A EVALUAR:\n- Tema: {topic}\n- Nicho: {niche}\n- Guion:\n{script_text}\n\nCRITERIOS A EVALUAR (cada uno de 1-10):\n{criteria_list}\n\nOUTPUT JSON:\n{{\n    \"criteria_scores\": [\n        {{\"name\": \"criterio1\", \"score\": 7, \"comment\": \"...\"}}\n    ],\n    \"overall_score\": 7.5,\n    \"verdict\": \"APROBAR\",\n    \"top_issues\": [],\n    \"quick_wins\": []\n}}"
+        },
+        "InvestigativeJournalist": {
+            "name": "🕵️ Periodista Investigativo",
+            "prompt": "ERES UN PERIODISTA DE INVESTIGACIÓN GANADOR DEL PULITZER.\n\nTEMA: {topic}\n\nTU MISIÓN: Encuentra el 'lado humano' y las historias que nadie está contando sobre este tema.\n\nBusca:\n1. Anécdotas personales impactantes\n2. Ironías del destino o coincidencias extrañas\n3. El impacto emocional real en personas comunes\n4. Escándalos poco conocidos o 'cabos sueltos'\n\nFORMATO: Texto narrativo, cautivador, estilo crónica."
+        },
+        "FactChecker": {
+            "name": "✅ Fact Checker",
+            "prompt": "ERES UN VERIFICADOR DE DATOS OBSESIVO CON LA PRECISIÓN.\n\nINVESTIGACIÓN DISPONIBLE:\n- Deep Research: {deep_research}\n- Human Stories: {human_stories}\n\nTU TAREA: Cruza estos dos documentos y crea un 'Dossier de Verdad' final.\n1. Elimina cualquier dato que parezca inventado o contradictorio.\n2. Asegura que los nombres, fechas y números sean coherentes.\n3. Combina la frialdad de los datos con el calor de las historias humanas.\n\nSolo devuelve el texto final verificado."
+        },
+        "ScriptArchitect": {
+            "name": "🏗️ Arquitecto de Guion",
+            "prompt": "ERES UN ESTRATEGA NARRATIVO EXPERTO EN RETENCIÓN.\n\nTEMA: {title}\nÁNGULO: {angle}\nTÉCNICA: {technique}\nPSICOLOGÍA AUDIENCIA: {audience_psychographics}\n\nDISEÑA LA ESTRUCTURA (ESCALETA) DEL GUION.\nDivide el video en bloques lógicos (gancho, intro, desarrollo, giro, clímax, cta).\n\nOUTPUT JSON:\n{{\n    \"outline\": [\n        {{\n            \"block_number\": 1,\n            \"section\": \"HOOK\",\n            \"content_brief\": \"Qué se dirá brevemente\",\n            \"retention_trigger\": \"Por qué se quedarán\"\n        }}\n    ]\n}}"
+        },
+        "HookMaster": {
+            "name": "🧲 Hook Master",
+            "prompt": "ERES EXPERTO EN PSICOLOGÍA DEL CLICK Y RETENCIÓN DE 5 SEGUNDOS.\n\nTÍTULO: {title}\nHOOK ACTUAL: {current_hook}\nMIEDOS AUDIENCIA: {fears}\n\nMEJORA EL GANCHO INICIAL.\nDebe ser irresistible, generar un 'curiosity gap' inmediato y conectar con un miedo o deseo profundo.\n\nOUTPUT JSON:\n{{\n    \"selected_hook\": {{\n        \"text\": \"El nuevo texto del gancho\",\n        \"psychology\": \"Por qué funciona\"\n    }}\n}}"
+        },
+        "ComedySpecialist": {
+            "name": "🎭 Especialista en Punch-ups",
+            "prompt": "ERES UN COMEDIANTE Y GUIONISTA DE TV.\n\nGUIÓN: {script_text}\n\nTU TAREA: Agrega 'punch-ups', analogías brillantes, humor sutil y giros lingüísticos que hagan el guion más entretenido y memorable.\nMantén el tono épico pero con chispas de genialidad.\n\nOUTPUT JSON:\n{{\n    \"enhanced_script\": [\n        ... (mismo formato que el original)\n    ]\n}}"
+        },
+        "ArtDirector": {
+            "name": "🎨 Director de Arte",
+            "prompt": "ERES UN VISIONARIO VISUAL.\n\nTEMA: {topic}\nTONO: {tone}\n\nDEFINE EL MANUAL DE ESTILO VISUAL.\nPaleta de colores, estética general (Cyberpunk, Noir, Minimalista, etc.), tipo de iluminación.\n\nOUTPUT JSON:\n{{\n    \"visual_style\": {{\n        \"aesthetic\": \"estética\",\n        \"color_palette\": [],\n        \"lighting\": \"...\"\n    }}\n}}"
+        },
+        "PromptEngineer": {
+            "name": "🤖 Prompt Engineer",
+            "prompt": "ERES EXPERTO EN GENERATIVAS VISUALES (MIDJOURNEY/DALL-E).\n\nESTILO: {art_style}\nSECCIÓN: {section}\nSUGERENCIA: {visual_suggestion}\nTEXTO AUDIO: {audio_text}\n\nESCRIBE UN PROMPT TÉCNICO DETALLADO PARA GENERAR UNA IMAGEN 16:9.\nIncluye detalles de cámara, luz, composición y estilo.\nSolo devuelve el prompt."
+        },
+        "ThumbnailStrategist": {
+            "name": "📸 Thumbnail Strategist",
+            "prompt": "ERES EL MEJOR DISEÑADOR DE MINIATURAS DE YOUTUBE.\n\nTEMA: {topic}\nMIEDOS: {fears}\nESTILO: {aesthetic}\n\nDISEÑA CONCEPTO DE MINIATURA VIRAL.\n\nOUTPUT JSON:\n{{\n    \"concept\": \"Descripción visual\",\n    \"text_overlay\": \"Texto corto y potente\",\n    \"technical_prompt\": \"Prompt para generar la miniatura\"\n}}"
+        },
+        "AudioDirector": {
+            "name": "🎙️ Audio Director",
+            "prompt": "ERES DIRECTOR DE SONIDO CINEMATOGRÁFICO.\n\nGUIÓN: {script_text}\n\nPARA CADA BLOQUE, DEFINE:\n1. Tono de voz\n2. Efectos de sonido (SFX)\n3. Música de fondo y cambios de energía.\n\nOUTPUT JSON:\n{{\n    \"audio_notes\": [\n        {{\"block\": 1, \"tone\": \"...\", \"sfx\": \"...\"}}\n    ],\n    \"global_notes\": {{}}\n}}"
+        },
+        "SEOOptimizer": {
+            "name": "📈 SEO Optimizer",
+            "prompt": "ERES EXPERTO EN ALGORITMOS DE YOUTUBE.\n\nTEMA: {topic}\nNICHO: {niche}\n\nGENERA METADATOS OPTIMIZADOS.\n\nOUTPUT JSON:\n{{\n    \"titles\": {{\"primary\": \"...\", \"alternatives\": []}},\n    \"description\": {{\"hook\": \"...\", \"full_description\": \"...\"}},\n    \"tags\": []\n}}"
+        },
+        "AudienceProfiler": {
+            "name": "🧠 Audience Profiler",
+            "prompt": "ERES UN EXPERTO EN PSICOLOGÍA DE AUDIENCIAS Y PSICOGRAFÍA.\n\nNICHO: {niche}\nTEMAS: {topics}\n\nCONSTRUYE EL PERFIL PSICOLÓGICO DE LA AUDIENCIA.\n\nOUTPUT JSON:\n{{\n    \"psychographics\": {{\n        \"primary_fears\": [],\n        \"deep_desires\": [],\n        \"common_objections\": []\n    }},\n    \"messaging_guide\": {{\n        \"speak_to\": \"...\",\n        \"avoid_words\": []\n    }}\n}}"
+        },
+        "ProjectManager": {
+            "name": "💼 Project Manager",
+            "prompt": "ERES EL DIRECTOR CREATIVO Y PROJECT MANAGER DEL ENJAMBRE.\n\nOPORTUNIDADES: {opportunities}\nPERFIL AUDIENCIA: {audience_profile}\n\nTAREA: Selecciona la mejor oportunidad y crea la 'Biblia del Proyecto'.\n\nOUTPUT JSON:\n{{\n    \"selected_topic\": {{\n        \"title\": \"...\",\n        \"angle\": \"...\",\n        \"hook\": \"...\"\n    }},\n    \"content_strategy\": {{\n        \"storytelling_technique\": \"...\",\n        \"target_length_minutes\": 10,\n        \"tone\": \"...\"\n    }}\n}}"
         }
     }
 }

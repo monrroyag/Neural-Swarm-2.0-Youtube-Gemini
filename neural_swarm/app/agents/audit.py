@@ -46,7 +46,7 @@ class SpecialistAuditor(AgentBase):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             result["agent_name"] = self.agent_name
             result["agent_icon"] = self.agent_icon
             await self.log(f"Score: {result.get('overall_score', 0)}/10 - {result.get('verdict', 'N/A')}")

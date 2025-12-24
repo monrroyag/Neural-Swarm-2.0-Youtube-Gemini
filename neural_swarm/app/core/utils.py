@@ -4,14 +4,19 @@ import re
 import random
 import logging
 
-def retry_with_backoff(fn, max_retries=10, initial_delay=2):
-    """Ejecuta una función con reintentos, backoff exponencial y manejo especial para 429."""
+import asyncio
+import inspect
+
+async def retry_with_backoff(fn, max_retries=10, initial_delay=2):
+    """Ejecuta una función (síncrona o asíncrona) con reintentos, backoff exponencial y manejo de errores de cuota."""
     for i in range(max_retries):
         try:
+            if inspect.iscoroutinefunction(fn):
+                return await fn()
             return fn()
         except Exception as e:
             error_msg = str(e).upper()
-            is_rate_limit = "429" in error_msg or "QUOTA" in error_msg or "LIMIT" in error_msg
+            is_rate_limit = any(x in error_msg for x in ["429", "QUOTA", "LIMIT"])
             
             if i == max_retries - 1:
                 raise e
@@ -22,7 +27,7 @@ def retry_with_backoff(fn, max_retries=10, initial_delay=2):
             else:
                 delay = initial_delay * (2 ** i) + random.uniform(0, 1)
                 
-            time.sleep(delay)
+            await asyncio.sleep(delay)
 
 def clean_and_parse_json(text: str) -> any:
     """Limpia la respuesta del LLM y la convierte en un diccionario o lista JSON."""

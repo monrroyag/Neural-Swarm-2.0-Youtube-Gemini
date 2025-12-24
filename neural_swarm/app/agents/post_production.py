@@ -30,7 +30,7 @@ class SEOOptimizerAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.seo_package = retry_with_backoff(_call)
+            context.seo_package = await retry_with_backoff(_call)
             await self.log(f"✅ SEO optimizado")
             await manager.broadcast("Paquete SEO Generado", "data_update", {"step": "post_seo", "data": context.seo_package})
         except Exception as e:
@@ -61,7 +61,7 @@ class AudioDirectorAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.audio_instructions = retry_with_backoff(_call)
+            context.audio_instructions = await retry_with_backoff(_call)
             await self.log("✅ Instrucciones de audio completas")
             await manager.broadcast("Instrucciones de Audio (Director) listas", "data_update", {"step": "post_audio", "data": context.audio_instructions})
         except Exception as e:

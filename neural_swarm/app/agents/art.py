@@ -31,7 +31,7 @@ class ArtDirectorAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.art_direction = retry_with_backoff(_call)
+            context.art_direction = await retry_with_backoff(_call)
             await self.log(f"✅ Estilo definido")
             await manager.broadcast("Dirección de Arte definida", "data_update", {"step": "art_direction", "data": context.art_direction})
         except Exception as e:
@@ -65,7 +65,7 @@ class PromptEngineerAgent(SwarmAgent):
                 return res.text.strip()
             
             try:
-                visual_prompt = retry_with_backoff(_call)
+                visual_prompt = await retry_with_backoff(_call)
                 prompts_list.append({
                     "block": block.get("block", len(prompts_list)+1),
                     "section": section,
@@ -103,7 +103,7 @@ class ThumbnailStrategistAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.thumbnail_concept = retry_with_backoff(_call)
+            context.thumbnail_concept = await retry_with_backoff(_call)
             await self.log(f"✅ Concepto de thumbnail definido")
             await manager.broadcast("Estrategia de Thumbnail definida", "data_update", {"step": "art_thumbnail", "data": context.thumbnail_concept})
         except Exception as e:

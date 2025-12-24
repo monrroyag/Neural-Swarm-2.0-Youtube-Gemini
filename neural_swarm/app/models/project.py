@@ -29,9 +29,12 @@ class ProjectContext:
     
     # Phase 4: Assets outputs
     art_direction: dict = field(default_factory=dict)
-    visual_prompts: List[str] = field(default_factory=list)
+    visual_prompts: List[dict] = field(default_factory=list)
     thumbnail_concept: dict = field(default_factory=dict)
     audio_instructions: dict = field(default_factory=dict)
     seo_package: dict = field(default_factory=dict)
     generated_images: List[str] = field(default_factory=list)
     audio_files: List[str] = field(default_factory=list)
+    
+    # Flow Control
+    refinement_count: int = 0

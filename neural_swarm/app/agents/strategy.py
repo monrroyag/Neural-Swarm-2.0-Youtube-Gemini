@@ -31,7 +31,7 @@ class TrendHunterAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            result = retry_with_backoff(_call)
+            result = await retry_with_backoff(_call)
             if isinstance(result, list):
                 context.trend_opportunities = result
             elif isinstance(result, dict):
@@ -69,7 +69,7 @@ class AudienceProfilerAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.audience_profile = retry_with_backoff(_call)
+            context.audience_profile = await retry_with_backoff(_call)
             await self.log("✅ Perfil de audiencia construido")
             await manager.broadcast("Perfil de Audiencia creado", "data_update", {"step": "audience", "data": context.audience_profile})
         except Exception as e:
@@ -99,7 +99,7 @@ class ProjectManagerAgent(SwarmAgent):
             return clean_and_parse_json(res.text)
         
         try:
-            context.project_bible = retry_with_backoff(_call)
+            context.project_bible = await retry_with_backoff(_call)
             
             # Robust extraction of the selected topic title
             if isinstance(context.project_bible, dict):
@@ -134,7 +134,7 @@ class CompetitorAnalystAgent(SwarmAgent):
             return self.grounded_call(client, MODEL_FAST, prompt, response_mime_type="application/json")
         
         try:
-            result = clean_and_parse_json(retry_with_backoff(_call))
+            result = clean_and_parse_json(await retry_with_backoff(_call))
             if isinstance(result, list):
                 context.competitor_analysis = result
             elif isinstance(result, dict):
